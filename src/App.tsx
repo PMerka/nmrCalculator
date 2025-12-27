@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { ligandConcForOccupancy } from "./utils/getLigandConcentration";
+import PipettingVolumes from "./components/PipetingVolumes";
 
 function App() {
   const [proteinConcentration, setProteinConcentration] = useState(120);
@@ -9,7 +10,7 @@ function App() {
 
   return (
     <>
-    <h1>Get concentration of ligant</h1>
+      <h1>Get concentration of ligant</h1>
       <div>
         Concentration
         <input
@@ -35,10 +36,12 @@ function App() {
         />
       </div>
       <div>
-         {"Target concentration "}
-        {Math.round(ligandConcForOccupancy(ocupancy, Kd, proteinConcentration)*100)/100}
+        {"Target concentration "}
+        {Math.round(
+          ligandConcForOccupancy(ocupancy, Kd, proteinConcentration) * 100
+        ) / 100}
       </div>
-      
+      <PipettingVolumes />
     </>
   );
 }

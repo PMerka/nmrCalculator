@@ -1,0 +1,13 @@
+.valueInput {
+  max-width: 4em;
+}
+
+.label {
+  display: flex;
+  gap: 0.5em;
+}
+
+.labelText {
+  flex-grow: 1;
+  text-align: right;
+}
