@@ -1,10 +1,12 @@
+import type { ReactNode } from "react";
 import styles from "./InputSection.module.css";
 
 interface InputSectionProps {
-  labelText: string;
+  labelText: ReactNode;
   value: number;
   unit?: string;
   onChange: (value: number) => void;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 const InputSection = ({
@@ -12,6 +14,7 @@ const InputSection = ({
   value,
   unit,
   onChange,
+  inputProps,
 }: InputSectionProps) => {
   return (
     <div>
@@ -22,6 +25,7 @@ const InputSection = ({
           value={value}
           onChange={(e) => onChange(+e.target.value)}
           className={styles.valueInput}
+          {...inputProps}
         />
         <span className={styles.unitText}>{unit}</span>
       </label>

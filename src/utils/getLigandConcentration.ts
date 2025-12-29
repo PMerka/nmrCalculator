@@ -13,18 +13,26 @@ export function ligandConcForOccupancy(
   occupancy: number,
   Kd: number,
   cp: number
-): number {
+) {
+  const errors = [];
+
   if (cp <= 0) {
-    throw new Error(`Total protein concentration cp must be > 0 (got cp=${cp})`);
+    errors.push(
+      `Total protein concentration cp must be bigger than 0 (got cp=${cp})`
+    );
   }
 
-  if (!(occupancy > 0 && occupancy <= 1)) {
-    throw new Error(`Occupancy must be in (0, 1], got occupancy=${occupancy}`);
+  if (occupancy < 0 || occupancy > 1) {
+    errors.push(`Occupancy must be in (0, 1], got occupancy=${occupancy}`);
   }
 
   // 100% occupancy asymptotically requires infinite ligand concentration
   if (Math.abs(occupancy - 1.0) < 1e-12) {
-    return Infinity;
+    return { value: Infinity, errors: null };
+  }
+
+  if (errors.length > 0) {
+    return { value: null, errors };
   }
 
   // Convenience variable: (Kd / cp) + 1
@@ -34,5 +42,5 @@ export function ligandConcForOccupancy(
   const x = (occupancy * (occupancy - beta)) / (occupancy - 1.0);
 
   // Convert back to absolute ligand concentration
-  return x * cp;
+  return { value: x * cp, errors: null };
 }

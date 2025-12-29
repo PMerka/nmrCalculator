@@ -1,13 +1,37 @@
-.valueInput {
-  max-width: 4em;
-}
-
 .label {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
   gap: 0.5em;
+  margin-bottom: 0.25em;
+
+  font-size: 0.85rem;
 }
 
 .labelText {
-  flex-grow: 1;
   text-align: right;
+  color: #1f2937; /* slate-800 */
+}
+
+.valueInput {
+  width: 5.5em;
+  padding: 4px 6px;
+
+  font-size: 0.85rem;
+  font-family: inherit;
+
+  border: 1px solid #cbd5e1; /* slate-300 */
+  border-radius: 4px;
+
+  text-align: right;
+}
+
+.valueInput:focus {
+  outline: none;
+  border-color: #000f30;
+  box-shadow: 0 0 0 1px #000714;
+}
+
+.unitText {
+  min-width: 2.5em;
 }

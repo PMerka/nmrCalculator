@@ -30,19 +30,16 @@ export function getPipettingVolumes({
   C_protein_stock: number;
   C_protein_target: number;
   eps: number;
-}): {
-  V_ligand_stock: number;
-  V_protein_stock: number;
-  V_neat_DMSO: number;
-  V_buffer: number;
-} {
+}) {
+  const errors = [];
+
   if (
     DMSO_stock_pct < 0 ||
     DMSO_stock_pct > 1 ||
     DMSO_target_pct < 0 ||
     DMSO_target_pct > 1
   ) {
-    throw new Error("DMSO fractions must be in the interval [0, 1].");
+    errors.push("DMSO fractions must be in the interval [0, 1].");
   }
 
   const positiveParams: Record<string, number> = {
@@ -53,20 +50,20 @@ export function getPipettingVolumes({
 
   for (const [name, value] of Object.entries(positiveParams)) {
     if (value <= 0) {
-      throw new Error(`${name} must be positive.`);
+      errors.push(`${name} must be positive.`);
     }
   }
 
   if (C_ligand_target < 0 || C_protein_target < 0) {
-    throw new Error("Target concentrations must be non-negative.");
+    errors.push("Target concentrations must be non-negative.");
   }
 
   // ---------------------------------------------------- ligand
   const V_ligand_stock = (C_ligand_target / C_ligand_stock) * V_final;
 
   if (V_ligand_stock > V_final + eps) {
-    throw new Error(
-      `Ligand stock volume ${V_ligand_stock} exceeds total volume ${V_final}`
+    errors.push(
+      `Ligand stock volume ${V_ligand_stock} exceeds total volume ${V_final} µL.`
     );
   }
 
@@ -74,9 +71,9 @@ export function getPipettingVolumes({
   const V_DMSO_from_lig = V_ligand_stock * DMSO_stock_pct;
 
   if (V_DMSO_from_lig > V_DMSO_target + eps) {
-    throw new Error(
-      `Ligand stock already supplies ${V_DMSO_from_lig} of DMSO, ` +
-        `which exceeds the target ${V_DMSO_target}.`
+    errors.push(
+      `Ligand stock already supplies ${V_DMSO_from_lig} µL of DMSO, ` +
+        `which exceeds the target ${V_DMSO_target} µL.`
     );
   }
 
@@ -86,8 +83,8 @@ export function getPipettingVolumes({
   const V_protein_stock = (C_protein_target / C_protein_stock) * V_final;
 
   if (V_protein_stock > V_final + eps) {
-    throw new Error(
-      `Protein stock volume ${V_protein_stock} exceeds total volume ${V_final}`
+    errors.push(
+      `Protein stock volume ${V_protein_stock} µL exceeds total volume ${V_final} µL`
     );
   }
 
@@ -95,7 +92,7 @@ export function getPipettingVolumes({
   let V_buffer = V_final - (V_ligand_stock + V_protein_stock + V_neat_DMSO);
 
   if (V_buffer < -eps) {
-    throw new Error(
+    errors.push(
       "Combined volumes of ligand stock, protein stock and neat DMSO " +
         "exceed total target volume."
     );
@@ -104,9 +101,12 @@ export function getPipettingVolumes({
   V_buffer = Math.max(0, V_buffer);
 
   return {
-    V_ligand_stock,
-    V_protein_stock,
-    V_neat_DMSO,
-    V_buffer,
+    value: {
+      V_ligand_stock,
+      V_protein_stock,
+      V_neat_DMSO,
+      V_buffer,
+    },
+    errors: errors.length > 0 ? errors : null,
   };
 }

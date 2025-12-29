@@ -4,3 +4,10 @@
   padding: 2rem;
   text-align: center;
 }
+
+.appContainer {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
